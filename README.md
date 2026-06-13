@@ -1,4 +1,5 @@
 # Autonomous Tech News Research and Distribution Agent
+<img width="1433" height="545" alt="Screenshot 2026-06-12 223459" src="https://github.com/user-attachments/assets/2c817c4d-944a-413e-bea5-d12f8a1e931f" />
 
 ## 📰 Overview
 This n8n workflow automates the process of researching, curating, and distributing daily technology news digests. The agent runs on a schedule, fetches articles from multiple tech news sources, uses AI to analyze and select the most relevant stories, and delivers formatted reports via email and Discord.
