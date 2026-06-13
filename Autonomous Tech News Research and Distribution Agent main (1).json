@@ -67,7 +67,7 @@
         "text": "={{ $json.articles }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are a professional tech news editor.\n\nAnalyze ALL provided articles.\n\nOnly consider articles that are actual technology NEWS.\n\nIgnore:\n- Personal blogs\n- Opinion pieces\n- Tutorials\n- Product reviews\n- Essays\n- Regulatory discussions\n- Lifestyle content\n\nPrioritize:\n- AI news\n- Major company announcements\n- Product launches\n- Cybersecurity incidents\n- Funding rounds\n- Acquisitions\n- Open-source releases\n\nSelect the 2 most important UNIQUE technology news stories from the current batch.\nDo not select two stories covering similar topics.\n\nReturn ONLY valid JSON.\n\nRules:\n- Do not return markdown outside JSON.\n- Do not return explanations.\n- Do not return code fences.\n- Preserve all line breaks exactly.\n- Keep emojis and separators.\n- Use \\n for line breaks inside JSON strings.\n- Escape quotes correctly.\n- email_report must follow the template exactly.\n- discord_report must be under 1500 characters.\n- Include original URLs.\n- Use article titles exactly when possible.\n\nReturn this schema:\n\n{\n  \"email_report\": \"<h2> 1. [TITLE]</h2>\\nSummary:\\n• Point 1\\n• Point 2\\n• Point 3\\n• Point 4\\n• Point 5\\nLink:\\n[URL]\\n----------------------------------------------------------------------\\n<h2>2. [TITLE]</h2>\\nSummary:\\n• Point 1\\n• Point 2\\n• Point 3\\n• Point 4\\n• Point 5\\nLink:\\n[URL]\",\n  \n  \"discord_report\": \n\n# **🚀 Tech News Digest**\n\n## **1. [TITLE]**\n\n**Summary:**\n• Point 1\n• Point 2\n• Point 3\n• Point 4\n• Point 5\n\n**Link:**\n[URL]\n\n## **2. [TITLE]**\n\n**Summary:**\n• Point 1\n• Point 2\n• Point 3\n• Point 4\n• Point 5\n\n**Link:**\n[URL]\"\n} \n\nand strictly use trivaly to fetch latest news "
+          "systemMessage": "You are a professional tech news editor.\n\nAnalyze ALL provided articles.\n\nOnly consider articles that are actual technology NEWS.\n\nIgnore:\n- Personal blogs\n- Opinion pieces\n- Tutorials\n- Product reviews\n- Essays\n- Regulatory discussions\n- Lifestyle content\n\nPrioritize:\n- AI news\n- Major company announcements\n- Product launches\n- Cybersecurity incidents\n- Funding rounds\n- Acquisitions\n- Open-source releases\n\nSelect the 2 most important UNIQUE technology news stories from the current batch.\nDo not select two stories covering similar topics.\n\nReturn ONLY valid JSON.\n\nRules:\n- Do not return markdown outside JSON.\n- Do not return explanations.\n- Do not return code fences.\n- Preserve all line breaks exactly.\n- Keep emojis and separators.\n- Use \\n for line breaks inside JSON strings.\n- Escape quotes correctly.\n- email_report must follow the template exactly.\n- discord_report must be under 1500 characters.\n- Include original URLs.\n- Use article titles exactly when possible.\n\nReturn this schema:\n\n{\n  \"email_report\": \"<h2> 1. [TITLE]</h2>\\nSummary:\\n\\u2022 Point 1\\n\\u2022 Point 2\\n\\u2022 Point 3\\n\\u2022 Point 4\\n\\u2022 Point 5\\nLink:\\n[URL]\\n----------------------------------------------------------------------\\n<h2>2. [TITLE]</h2>\\nSummary:\\n\\u2022 Point 1\\n\\u2022 Point 2\\n\\u2022 Point 3\\n\\u2022 Point 4\\n\\u2022 Point 5\\nLink:\\n[URL]\",\n  \n  \"discord_report\": \n\n# **\\ud83d\\ude80 Tech News Digest**\n\n## **1. [TITLE]**\n\n**Summary:**\\n\\u2022 Point 1\\n\\u2022 Point 2\\n\\u2022 Point 3\\n\\u2022 Point 4\\n\\u2022 Point 5\\n\n**Link:**\\n[URL]\\n\n## **2. [TITLE]**\n\n**Summary:**\\n\\u2022 Point 1\\n\\u2022 Point 2\\n\\u2022 Point 3\\n\\u2022 Point 4\\n\\u2022 Point 5\\n\n**Link:**\\n[URL]\"\n} \n\nand strictly use trivaly to fetch latest news "
         }
       },
       "id": "7b9da1fd-b0ff-4373-8f32-6be6ddfd6331",
@@ -95,7 +95,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const articles = items\n  .slice(0, 15)\n  .map(item => `\nTitle: ${item.json.title}\nLink: ${item.json.link}\n`)\n  .join('\\n\\n');\n\nreturn [\n  {\n    json: {\n      articles\n    }\n  }\n];"
+        "jsCode": "const articles = items\n  .slice(0, 15)\n  .map(item => `\\nTitle: ${item.json.title}\\nLink: ${item.json.link}\\n`)\n  .join('\\n\\n');\n\nreturn [\n  {\n    json: {\n      articles\n    }\n  }\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -124,13 +124,7 @@
       "parameters": {
         "resource": "message",
         "guildId": {
-          "__rl": true,
-          "value": "1514140192078823584",
-          "mode": "id"
-        },
-        "channelId": {
-          "__rl": true,
-          "value": "1514140192754237532",
+          "__r…159 chars truncated…1514140192754237532",
           "mode": "id"
         },
         "content": "=  {{ JSON.parse($json.output).discord_report }}",
@@ -174,9 +168,9 @@
     },
     {
       "parameters": {
-        "sendTo": "dipesh.gawad1974@gmail.com",
+        "sendTo": "YOUR_EMAIL@gmail.com",
         "subject": "=Tech News Digest - {{$now.toFormat(\"MMMM d, yyyy\")}}",
-        "message": "={{ `\n<h1>🚀 TECH NEWS DIGEST</h1>\n${JSON.parse($json.output).email_report.replace(/\\n/g, '<br>')}\n` }}",
+        "message": "={{ `\\n<h1>\\ud83d\\ude80 TECH NEWS DIGEST</h1>\\n${JSON.parse($json.output).email_report.replace(/\\\\n/g, '<br>')}\\n` }}",
         "options": {}
       },
       "type": "n8n-nodes-base.gmail",
