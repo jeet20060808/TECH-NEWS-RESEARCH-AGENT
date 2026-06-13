@@ -1,0 +1,348 @@
+{
+  "name": "Autonomous Tech News Research and Distribution Agent main",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "c1d46539-61a3-4478-bfed-1d45362c257c",
+      "name": "Daily Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -224,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://news.ycombinator.com/rss?utm_source=chatgpt.com",
+        "options": {}
+      },
+      "id": "b184bc17-cce7-4598-ad3c-1dd02aa8e386",
+      "name": "Hacker News RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "23986455-a13c-4430-8582-293539b5443c",
+      "name": "Combine All Articles",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        336,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://techcrunch.com/feed/?utm_source=chatgpt.com",
+        "options": {}
+      },
+      "id": "be157d56-0494-4f7a-aae7-2094cc7900be",
+      "name": "TechCrunch RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.articles }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a professional tech news editor.\n\nAnalyze ALL provided articles.\n\nOnly consider articles that are actual technology NEWS.\n\nIgnore:\n- Personal blogs\n- Opinion pieces\n- Tutorials\n- Product reviews\n- Essays\n- Regulatory discussions\n- Lifestyle content\n\nPrioritize:\n- AI news\n- Major company announcements\n- Product launches\n- Cybersecurity incidents\n- Funding rounds\n- Acquisitions\n- Open-source releases\n\nSelect the 2 most important UNIQUE technology news stories from the current batch.\nDo not select two stories covering similar topics.\n\nReturn ONLY valid JSON.\n\nRules:\n- Do not return markdown outside JSON.\n- Do not return explanations.\n- Do not return code fences.\n- Preserve all line breaks exactly.\n- Keep emojis and separators.\n- Use \\n for line breaks inside JSON strings.\n- Escape quotes correctly.\n- email_report must follow the template exactly.\n- discord_report must be under 1500 characters.\n- Include original URLs.\n- Use article titles exactly when possible.\n\nReturn this schema:\n\n{\n  \"email_report\": \"<h2> 1. [TITLE]</h2>\\nSummary:\\n• Point 1\\n• Point 2\\n• Point 3\\n• Point 4\\n• Point 5\\nLink:\\n[URL]\\n----------------------------------------------------------------------\\n<h2>2. [TITLE]</h2>\\nSummary:\\n• Point 1\\n• Point 2\\n• Point 3\\n• Point 4\\n• Point 5\\nLink:\\n[URL]\",\n  \n  \"discord_report\": \n\n# **🚀 Tech News Digest**\n\n## **1. [TITLE]**\n\n**Summary:**\n• Point 1\n• Point 2\n• Point 3\n• Point 4\n• Point 5\n\n**Link:**\n[URL]\n\n## **2. [TITLE]**\n\n**Summary:**\n• Point 1\n• Point 2\n• Point 3\n• Point 4\n• Point 5\n\n**Link:**\n[URL]\"\n} \n\nand strictly use trivaly to fetch latest news "
+        }
+      },
+      "id": "7b9da1fd-b0ff-4373-8f32-6be6ddfd6331",
+      "name": "Categorize & Summarize",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        944,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        448,
+        864
+      ],
+      "id": "9a98b889-4047-4b1f-8d04-c3b35ae318d4",
+      "name": "Groq Chat Model"
+    },
+    {
+      "parameters": {
+        "jsCode": "const articles = items\n  .slice(0, 15)\n  .map(item => `\nTitle: ${item.json.title}\nLink: ${item.json.link}\n`)\n  .join('\\n\\n');\n\nreturn [\n  {\n    json: {\n      articles\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        288
+      ],
+      "id": "99a9135c-1a57-40fc-bbaa-4546cc4a0db0",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "https://www.theverge.com/rss/index.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        560
+      ],
+      "id": "c6aad07a-1698-47dd-908b-e95fdadf4884",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1514140192078823584",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1514140192754237532",
+          "mode": "id"
+        },
+        "content": "=  {{ JSON.parse($json.output).discord_report }}",
+        "options": {}
+      },
+      "id": "b3525acb-1d2a-4515-8c1f-6346a1592625",
+      "name": "Send to Discord",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        400
+      ],
+      "webhookId": "783e2b40-6f52-4e45-b25f-6354e52480f0",
+      "credentials": {
+        "discordBotApi": {
+          "id": "0MjkbDbPTQhAIwVg",
+          "name": "Discord Bot account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        800,
+        496
+      ],
+      "id": "fb3bf9dd-e1f5-4a26-9083-37dfc5f2cdd7",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "4zRqpYpBXMyaC5I7",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "dipesh.gawad1974@gmail.com",
+        "subject": "=Tech News Digest - {{$now.toFormat(\"MMMM d, yyyy\")}}",
+        "message": "={{ `\n<h1>🚀 TECH NEWS DIGEST</h1>\n${JSON.parse($json.output).email_report.replace(/\\n/g, '<br>')}\n` }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1504,
+        192
+      ],
+      "id": "61bf19f8-8889-4bde-aacc-79cf37a5eaa2",
+      "name": "Send a message",
+      "webhookId": "fc287f12-6a7e-4f29-b810-726052f9ded5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IkryO9e55lfmYCEX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        512
+      ],
+      "id": "6906870d-96e5-4a94-a615-4584806a606a",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "ymAETEDC0IYquXt8",
+          "name": "Tavily account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily Schedule": {
+      "main": [
+        [
+          {
+            "node": "Hacker News RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TechCrunch RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hacker News RSS": {
+      "main": [
+        [
+          {
+            "node": "Combine All Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine All Articles": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TechCrunch RSS": {
+      "main": [
+        [
+          {
+            "node": "Combine All Articles",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Categorize & Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send to Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Categorize & Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Combine All Articles",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Categorize & Summarize",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "Categorize & Summarize",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "27449b8d-c88f-4edd-b982-6e83af07cddc",
+  "meta": {
+    "instanceId": "21ddfa45967ee07838ddc6f27998b25bc505402dd5cf3c0ef80c184d8abbe432"
+  },
+  "nodeGroups": [],
+  "id": "UyaujuxPgULl8yEP",
+  "tags": []
+}
