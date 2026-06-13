@@ -4,6 +4,7 @@
 ## Overview ℹ️
 
 This n8n workflow automates the process of researching, curating, and distributing daily technology news digests. The agent runs on a schedule, fetches articles from multiple tech news sources, uses AI to analyze and select the most relevant stories, and delivers formatted reports via email and Discord.
+<img width="1433" height="545" alt="image" src="https://github.com/user-attachments/assets/9ed39cd9-af8e-4f40-8ba1-2024cf6043d9" />
 
 ## How It Works ⚙️
 
@@ -192,8 +193,3 @@ Feel free to fork this workflow and adapt it to your specific needs. Submit pull
 ## License
 
 This workflow is provided as-is for educational and personal use. Customize and deploy according to your instance's terms of service.
-
---- 
-
-Just add few emojis in it nothing else
-<img width="1433" height="545" alt="image" src="https://github.com/user-attachments/assets/9ed39cd9-af8e-4f40-8ba1-2024cf6043d9" />
